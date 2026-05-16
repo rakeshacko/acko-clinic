@@ -259,6 +259,7 @@ export interface Effect {
     | "setOpsTodayStatus"
     | "pinMessage"
     | "addReaction"
+    | "addReactionToLatest"
     | "crossPost"
     | "updateVisit"
     | "openForm"

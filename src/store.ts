@@ -507,6 +507,14 @@ function applyEffects(effects: Effect[] | undefined, ctx: { instanceId: string; 
         st.postMessage(targetId, msg);
         break;
       }
+      case "addReactionToLatest": {
+        // Finds the most recent message in the instance's channel matching
+        // the optional author filter and adds the reaction to it.
+        const list = useStore.getState().messagesByChannel[ctx.channelId] ?? [];
+        const target = [...list].reverse().find((m) => (eff.author ? m.author === eff.author : true));
+        if (target) st.addReaction(target.id, eff.emoji, eff.by);
+        break;
+      }
       case "updateVisit": {
         useStore.setState((s) => ({
           visits: { ...s.visits, [ctx.visitId]: { ...s.visits[ctx.visitId], ...eff.patch } as any },
