@@ -88,9 +88,6 @@ function podBeats(spec: PodSpec, fromVm: string): Beat[] {
       formId: spec.formId,
       next: resultId,
       emit: [],
-      // The technician's 👋 lands on the handoff card automatically — that's
-      // the spec's "contact made" signal without asking the user to do it.
-      sideEffects: [{ type: "addReactionToLatest", author: "VisitBot", emoji: "👋", by: spec.technician } as any],
     }),
     autoBeat({
       id: resultId,
@@ -338,7 +335,8 @@ const mammographySpec: PodSpec = {
 
 export const screeningScenario: Scenario = {
   id: "screening",
-  title: "Screening · P. Sharma (flagship)",
+  title: "Annual screening — Priya Sharma",
+  subtitle: "Full 9-pod screening with a flagged ultrasound",
   type: "screening",
   seed: {
     visit,

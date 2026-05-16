@@ -243,6 +243,10 @@ export interface Message {
   beatId?: string;
   // For messages that get edited in place (visit cards, ops-today rows).
   liveKey?: string;
+  // When a button on this message has been clicked, the engine records who
+  // acted and on which button. Buttons render disabled and an "Acted by …"
+  // line appears beneath. This mirrors chat.update on the same message.
+  actedBy?: { handle: StaffHandle; ts: string; actionLabel: string };
 }
 
 // --- Scenarios ------------------------------------------------------------
@@ -292,6 +296,7 @@ export interface ScenarioCtx {
 export interface Scenario {
   id: string;
   title: string;
+  subtitle?: string;
   type: VisitType | "branch" | "walk-in";
   seed: {
     visit: Omit<Visit, "channelId" | "status"> & { status?: VisitStatus };

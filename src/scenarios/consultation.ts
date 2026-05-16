@@ -27,7 +27,8 @@ const visit: Omit<Visit, "channelId" | "status"> = {
 
 export const consultationScenario: Scenario = {
   id: "consulting",
-  title: "Consultation · R. Kumar (in-room test)",
+  title: "Doctor consult — Rajesh Kumar",
+  subtitle: "Acid reflux · doctor orders an in-room ultrasound",
   type: "consulting",
   seed: {
     visit,

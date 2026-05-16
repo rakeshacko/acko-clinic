@@ -79,6 +79,11 @@ export function MessageView({ message, showAuthor = true, onAction }: MessageVie
           {message.blocks && message.blocks.length > 0 && (
             <BlocksWithRenderMode blocks={message.blocks} message={message} effectiveMode={effective} onAction={onAction} />
           )}
+          {message.actedBy && (
+            <ActedByLine
+              actedBy={message.actedBy}
+            />
+          )}
           {message.reactions && message.reactions.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-1">
               {message.reactions.map((r) => (
@@ -106,6 +111,21 @@ export function MessageView({ message, showAuthor = true, onAction }: MessageVie
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function ActedByLine({ actedBy }: { actedBy: NonNullable<Message["actedBy"]> }) {
+  const staff = getStaff(actedBy.handle);
+  const name = staff?.name ?? actedBy.handle;
+  return (
+    <div className="mt-1.5 flex items-center gap-1.5 text-[12px] text-slack-textSecondary">
+      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-acko-sage text-white text-[10px] font-bold">✓</span>
+      <span>
+        <strong className="text-slack-textPrimary font-semibold">{name}</strong>
+        {staff?.roleLabel && <span className="text-slack-textSecondary"> · {staff.roleLabel}</span>}
+        <span> · {actedBy.actionLabel} · {actedBy.ts}</span>
+      </span>
     </div>
   );
 }

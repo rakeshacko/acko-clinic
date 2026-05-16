@@ -28,7 +28,8 @@ function fakeVisit(id: string, name: [string, string], type: Visit["type"], extr
 // B1 — Late patient, within tolerance
 export const branchB1: Scenario = {
   id: "b1-late-within",
-  title: "B1 · Late within tolerance",
+  title: "Patient running 18 min late",
+  subtitle: "Within tolerance — adjust slot or reschedule",
   type: "branch",
   seed: {
     visit: fakeVisit("B1V1", ["Neha", "Bhatt"], "screening"),
@@ -83,7 +84,8 @@ export const branchB1: Scenario = {
 // B2 — Late beyond tolerance
 export const branchB2: Scenario = {
   id: "b2-late-beyond",
-  title: "B2 · Late beyond tolerance",
+  title: "Patient running 32 min late",
+  subtitle: "Beyond tolerance — force wait or reschedule",
   type: "branch",
   seed: { visit: fakeVisit("B2V1", ["Mihir", "Shenoy"], "consulting"), channelName: "v-20260518-B2V001-C", initialMembers: ["rohit.iyer", "dr.meera"] },
   beats: [
@@ -151,7 +153,8 @@ export const branchB2: Scenario = {
 // B3 — Doctor unavailable
 export const branchB3: Scenario = {
   id: "b3-doctor-unavailable",
-  title: "B3 · Doctor unavailable",
+  title: "Doctor no-show",
+  subtitle: "Swap doctor or reschedule the patient",
   type: "branch",
   seed: { visit: fakeVisit("B3V1", ["Tara", "Devi"], "consulting", { assignedDoctor: "dr.anand" }), channelName: "v-20260518-B3V001-C", initialMembers: ["rohit.iyer", "anjali.pillai", "dr.anand"] },
   beats: [
@@ -216,7 +219,8 @@ export const branchB3: Scenario = {
 // B4–B6 — Blood draw failures (in cardiac context)
 export const branchB4: Scenario = {
   id: "b4-blood-1",
-  title: "B4 · Blood draw 1st attempt fails",
+  title: "Blood draw — 1st attempt missed",
+  subtitle: "Retry now, or defer to later in the visit",
   type: "branch",
   seed: { visit: fakeVisit("B4V1", ["Anu", "Lal"], "screening"), channelName: "v-20260518-B4V001-S", initialMembers: ["kavya.rao", "sneha.reddy", "rohit.iyer"] },
   beats: [
@@ -270,7 +274,8 @@ export const branchB4: Scenario = {
 
 export const branchB5: Scenario = {
   id: "b5-blood-2",
-  title: "B5 · Blood draw 2nd attempt fails",
+  title: "Blood draw — 2nd attempt missed",
+  subtitle: "Defer to after pod 5, page tech back",
   type: "branch",
   seed: { visit: fakeVisit("B5V1", ["Riya", "Mishra"], "screening"), channelName: "v-20260518-B5V001-S", initialMembers: ["kavya.rao", "sneha.reddy", "rohit.iyer"] },
   beats: [
@@ -306,7 +311,8 @@ export const branchB5: Scenario = {
 
 export const branchB6: Scenario = {
   id: "b6-blood-3",
-  title: "B6 · Blood draw 3rd attempt fails — escalation",
+  title: "Blood draw — 3rd attempt missed",
+  subtitle: "Escalate to doctor · alternative site or defer",
   type: "branch",
   seed: { visit: fakeVisit("B6V1", ["Kalpana", "Joshi"], "screening"), channelName: "v-20260518-B6V001-S", initialMembers: ["kavya.rao", "sneha.reddy", "rohit.iyer"] },
   beats: [
@@ -343,7 +349,8 @@ export const branchB6: Scenario = {
 // B7 — Machine failure
 export const branchB7: Scenario = {
   id: "b7-machine-failure",
-  title: "B7 · Machine failure (CT)",
+  title: "CT machine down mid-visit",
+  subtitle: "Calibration error · pod blocks, alerts post",
   type: "branch",
   seed: { visit: fakeVisit("B7V1", ["Sai", "Reddy"], "screening"), channelName: "v-20260518-B7V001-S", initialMembers: ["kavya.rao", "ananya.sen", "rohit.iyer"] },
   beats: [
@@ -452,7 +459,8 @@ export const branchB7: Scenario = {
 // B8 — Patient walks out
 export const branchB8: Scenario = {
   id: "b8-walkout",
-  title: "B8 · Patient walks out mid-visit",
+  title: "Patient leaves mid-visit",
+  subtitle: "Exit form, 7-day hold, app reschedule flow",
   type: "branch",
   seed: { visit: fakeVisit("B8V1", ["Hema", "Pai"], "screening"), channelName: "v-20260518-B8V001-S", initialMembers: ["kavya.rao", "rohit.iyer", "anjali.pillai"] },
   beats: [

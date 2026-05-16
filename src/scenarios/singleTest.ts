@@ -26,7 +26,8 @@ const visit: Omit<Visit, "channelId" | "status"> = {
 
 export const singleTestScenario: Scenario = {
   id: "single-test",
-  title: "Single test · A. Khan (low-dose CT)",
+  title: "Single test — Arjun Khan",
+  subtitle: "Low-dose CT scan only",
   type: "single-test",
   seed: {
     visit,

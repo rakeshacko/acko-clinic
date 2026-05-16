@@ -23,7 +23,8 @@ const nonMemberVisit: Omit<Visit, "channelId" | "status"> = {
 
 export const walkinNonMemberScenario: Scenario = {
   id: "walkin-nonmember",
-  title: "Walk-in · S. Mehta (non-member)",
+  title: "Walk-in — Sunita Mehta",
+  subtitle: "Non-member · persistent cough",
   type: "walk-in",
   seed: {
     visit: nonMemberVisit,
@@ -222,7 +223,8 @@ const memberVisit: Omit<Visit, "channelId" | "status"> = {
 
 export const walkinMemberScenario: Scenario = {
   id: "walkin-member",
-  title: "Walk-in · A. Iyer (member)",
+  title: "Walk-in — Aarav Iyer",
+  subtitle: "Member · mild fever, same-day slot",
   type: "walk-in",
   seed: {
     visit: memberVisit,

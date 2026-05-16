@@ -50,10 +50,18 @@ function RegularChannelPane() {
     );
   }
 
+  const recordAction = useStore((s) => s.recordAction);
+  const currentUserHandle = useStore((s) => s.currentUserHandle);
+
   // Handler when a button inside a message gets clicked.
   const handleAction = (msg: Message, btn: ActionElement, _optionValue?: string) => {
+    if (msg.actedBy) return; // already acted on — ignore double click
     const nextBeatId = (btn as any).nextBeatId;
     if (!nextBeatId) return; // decorative button
+    // Record who acted so the channel sees an "✓ Acted by …" line in place.
+    if (btn.type === "button") {
+      recordAction(msg.id, currentUserHandle, btn.text.text);
+    }
     // Prefer the instance whose currentBeatId matches this message's beat, then fall back to any instance owning this channel.
     const instance =
       Object.values(instances).find((i) => i.channelId === msg.channelId && msg.beatId === i.currentBeatId) ??

@@ -22,50 +22,109 @@ export interface VisitCardData {
   visitId: string;
 }
 
+function visitTypeMeta(t: VisitCardData["visitType"]) {
+  if (t === "screening") return { label: "Annual screening", color: "bg-acko-sage text-white", icon: "🩺" };
+  if (t === "consulting") return { label: "Doctor consult", color: "bg-[#5B8FB9] text-white", icon: "👩‍⚕️" };
+  return { label: "Single test", color: "bg-[#C68E17] text-white", icon: "🩻" };
+}
+
 function VisitCardImage({ data }: { data: VisitCardData }) {
   const { patient } = data;
+  const meta = visitTypeMeta(data.visitType);
+  const initials = `${patient.firstName[0]}${patient.lastName[0]}`.toUpperCase();
+  const memberChip = patient.member
+    ? `Member · since ${patient.memberSince ?? "—"}`
+    : "Non-member";
+
   return (
-    <div className="bg-white border border-slack-border rounded-md w-full max-w-[560px] overflow-hidden">
-      <div className="bg-acko-warm px-5 py-3 border-b border-slack-border flex items-baseline justify-between">
-        <div>
-          <div className="text-[11px] uppercase tracking-wider text-acko-sageDark font-bold">
-            {data.visitType === "screening" ? "Annual Screening" : data.visitType === "consulting" ? "Consultation" : "Single Test"}
+    <div className="bg-white border border-slack-border rounded-lg w-full max-w-[560px] overflow-hidden shadow-sm">
+      {/* Hero strip */}
+      <div className="bg-gradient-to-br from-acko-warm to-acko-warm/60 px-4 md:px-5 pt-4 pb-4 border-b border-slack-border">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 rounded-full bg-acko-sageDark text-white flex items-center justify-center font-extrabold text-[16px] flex-shrink-0 shadow-sm">
+            {initials}
           </div>
-          <div className="text-[18px] font-extrabold text-slack-textPrimary">
-            {patient.firstName} {patient.lastName}, {patient.age}{patient.gender}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${meta.color}`}>
+                {meta.icon} {meta.label}
+              </span>
+              <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-white border border-slack-border text-slack-textSecondary">
+                {memberChip}
+              </span>
+            </div>
+            <div className="text-[17px] md:text-[18px] font-extrabold text-slack-textPrimary leading-tight">
+              {patient.firstName} {patient.lastName}
+            </div>
+            <div className="text-[12px] text-slack-textSecondary">
+              {patient.age} · {patient.gender === "F" ? "Female" : patient.gender === "M" ? "Male" : "Other"}
+              {patient.language && ` · ${patient.language}`}
+            </div>
           </div>
-        </div>
-        <div className="text-right">
-          <div className="text-[11px] text-slack-textSecondary">Scheduled</div>
-          <div className="text-[15px] font-bold">{data.scheduledTime}</div>
         </div>
       </div>
-      <div className="px-4 md:px-5 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[13px]">
-        {data.package && <Field label="Package" value={data.package} />}
-        {data.concern && <Field label="Concern" value={data.concern} />}
-        {data.duration && <Field label="Expected duration" value={data.duration} />}
-        {data.refreshment && <Field label="Refreshment" value={data.refreshment} />}
-        {data.language && <Field label="Language" value={data.language} />}
+
+      {/* When + what */}
+      <div className="px-4 md:px-5 py-3 grid grid-cols-1 sm:grid-cols-2 gap-3 border-b border-slack-divider">
+        <InfoRow icon="🕘" label="Scheduled" value={data.scheduledTime} />
+        {data.duration && <InfoRow icon="⏱" label="Expected length" value={data.duration} />}
+        {data.package && <InfoRow icon="📦" label="Package" value={data.package} />}
+        {data.concern && <InfoRow icon="💬" label="Concern" value={data.concern} />}
+        {data.refreshment && <InfoRow icon="🍋" label="Refreshment" value={data.refreshment} />}
         {data.accessibility && data.accessibility.length > 0 && (
-          <Field label="Accessibility" value={data.accessibility.join(", ")} />
+          <InfoRow icon="♿" label="Accessibility" value={data.accessibility.join(", ")} />
         )}
-        <Field label="Member" value={patient.member ? `Yes · since ${patient.memberSince ?? "—"}` : "No"} />
-        {data.assignedVm && <Field label="Visit Manager" value={`@${data.assignedVm}`} />}
-        {data.assignedDoctor && <Field label="Doctor" value={`@${data.assignedDoctor}`} />}
-        {data.opsAnchor && <Field label="Ops anchor" value={`@${data.opsAnchor}`} />}
       </div>
-      <div className="px-5 py-2 bg-acko-warm/40 border-t border-slack-border text-[11px] text-slack-textSecondary">
-        Visit ID · <code className="font-mono">{data.visitId}</code>
+
+      {/* Assigned to */}
+      {(data.assignedVm || data.assignedDoctor || data.opsAnchor) && (
+        <div className="px-4 md:px-5 py-3 border-b border-slack-divider">
+          <div className="text-[10px] uppercase tracking-wider text-slack-textSecondary font-bold mb-1.5">Assigned</div>
+          <div className="flex flex-wrap gap-3">
+            {data.assignedDoctor && <PersonChip handle={data.assignedDoctor} role="Doctor" />}
+            {data.assignedVm && <PersonChip handle={data.assignedVm} role="Visit manager" />}
+            {data.opsAnchor && <PersonChip handle={data.opsAnchor} role="Ops anchor" />}
+          </div>
+        </div>
+      )}
+
+      <div className="px-4 md:px-5 py-2 bg-acko-warm/40 text-[11px] text-slack-textSecondary flex items-center justify-between">
+        <span>Pinned to top of channel</span>
+        <code className="font-mono text-slack-textSecondary">#{data.visitId}</code>
       </div>
     </div>
   );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function InfoRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
-    <div>
-      <div className="text-[10px] uppercase tracking-wide text-slack-textSecondary font-semibold">{label}</div>
-      <div className="text-slack-textPrimary">{value}</div>
+    <div className="flex items-start gap-2">
+      <span className="text-[14px] leading-tight">{icon}</span>
+      <div className="min-w-0">
+        <div className="text-[10px] uppercase tracking-wide text-slack-textSecondary font-semibold">{label}</div>
+        <div className="text-[13px] text-slack-textPrimary leading-snug">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function PersonChip({ handle, role }: { handle: string; role: string }) {
+  // We don't want a hard dep on the staff seed here; just show initials from handle.
+  const initials = handle
+    .split(/[.\s_-]+/)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-7 h-7 rounded-full bg-slack-divider text-slack-textPrimary flex items-center justify-center text-[10px] font-bold">
+        {initials}
+      </span>
+      <div className="leading-tight">
+        <div className="text-[12px] font-semibold text-slack-textPrimary">@{handle}</div>
+        <div className="text-[10px] text-slack-textSecondary uppercase tracking-wide">{role}</div>
+      </div>
     </div>
   );
 }
@@ -128,42 +187,84 @@ export interface PodResultData {
 }
 
 function PodResultImage({ data }: { data: PodResultData }) {
+  const hasFlags = data.flags && data.flags.length > 0;
+  const statusBg = hasFlags ? "bg-amber-500" : "bg-acko-sage";
+  const statusLabel = hasFlags ? "Flagged" : "Complete";
+  const statusIcon = hasFlags ? "⚠" : "✓";
+
+  // Split values into "primary" (numbers, mostly the first 3-4) and "secondary".
+  const primary = data.values.slice(0, 3);
+  const secondary = data.values.slice(3);
+
   return (
-    <div className="bg-white border border-slack-border rounded-md w-full max-w-[540px] overflow-hidden">
-      <div className="px-5 py-3 border-b border-slack-border flex items-start gap-3">
-        <div className="text-2xl">{data.emoji}</div>
-        <div className="flex-1">
-          <div className="font-extrabold text-[15px] text-slack-textPrimary">
-            {data.podLabel} complete
+    <div className="bg-white border border-slack-border rounded-lg w-full max-w-[540px] overflow-hidden shadow-sm">
+      {/* Status header strip */}
+      <div className={`${statusBg} text-white px-4 py-2 flex items-center gap-2`}>
+        <span className="w-6 h-6 rounded-full bg-white/25 flex items-center justify-center text-[13px] font-bold">
+          {statusIcon}
+        </span>
+        <div className="font-extrabold text-[13px] uppercase tracking-wider">{statusLabel}</div>
+        <div className="ml-auto text-[11px] opacity-90">{data.startedAt} → {data.finishedAt}</div>
+      </div>
+
+      {/* Title row */}
+      <div className="px-4 md:px-5 py-3 border-b border-slack-divider flex items-start gap-3">
+        <div className="text-[26px] leading-none">{data.emoji}</div>
+        <div className="flex-1 min-w-0">
+          <div className="font-extrabold text-[16px] text-slack-textPrimary leading-tight">
+            {data.podLabel}
           </div>
-          <div className="text-[12px] text-slack-textSecondary">
-            {data.patientInitial} · {data.startedAt}–{data.finishedAt} · @{data.technician}
+          <div className="text-[12px] text-slack-textSecondary mt-0.5">
+            {data.patientInitial} · run by <strong className="text-slack-textPrimary">@{data.technician}</strong>
           </div>
         </div>
       </div>
-      <div className="px-5 py-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1.5 text-[13px]">
-          {data.values.map((v, i) => (
-            <div key={i} className="flex justify-between border-b border-slack-divider/70 py-0.5">
-              <span className="text-slack-textSecondary">{v.label}</span>
-              <span className="font-mono font-semibold text-slack-textPrimary">{v.value}</span>
+
+      {/* Primary readouts (big, hero) */}
+      {primary.length > 0 && (
+        <div className="px-4 md:px-5 py-3 grid grid-cols-3 gap-2 border-b border-slack-divider">
+          {primary.map((v, i) => (
+            <div key={i} className="bg-acko-warm/40 rounded-md px-2 py-2 text-center min-w-0">
+              <div className="text-[10px] uppercase tracking-wide text-slack-textSecondary font-semibold truncate">{v.label}</div>
+              <div className="font-bold text-[14px] text-slack-textPrimary truncate mt-0.5">{v.value}</div>
             </div>
           ))}
         </div>
-        {data.flags && data.flags.length > 0 && (
-          <div className="mt-3 px-2 py-1.5 bg-amber-50 border border-amber-300 rounded text-[12px] text-amber-900">
-            <strong>Flags:</strong> {data.flags.join(" · ")}
-          </div>
-        )}
-        {data.cues && data.cues.length > 0 && (
-          <div className="mt-2 text-[12px] text-slack-textSecondary">
-            <strong>Comfort cues confirmed:</strong> {data.cues.join(" · ")}
-          </div>
-        )}
-      </div>
+      )}
+
+      {/* Secondary rows */}
+      {secondary.length > 0 && (
+        <div className="px-4 md:px-5 py-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[12px] border-b border-slack-divider">
+          {secondary.map((v, i) => (
+            <div key={i} className="flex items-baseline justify-between gap-2 py-0.5">
+              <span className="text-slack-textSecondary truncate">{v.label}</span>
+              <span className="font-semibold text-slack-textPrimary text-right truncate">{v.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {hasFlags && (
+        <div className="px-4 md:px-5 py-2.5 bg-amber-50 border-b border-amber-200 text-[12px] text-amber-900">
+          <strong>⚠ Flagged:</strong> {data.flags!.join(" · ")}
+        </div>
+      )}
+
+      {data.cues && data.cues.length > 0 && (
+        <div className="px-4 md:px-5 py-2 flex flex-wrap gap-1.5 items-center border-b border-slack-divider">
+          <span className="text-[10px] uppercase tracking-wide text-slack-textSecondary font-semibold">Comfort cues</span>
+          {data.cues.map((c, i) => (
+            <span key={i} className="text-[11px] bg-acko-sageLight text-acko-sageDark px-1.5 py-0.5 rounded font-medium">
+              ✓ {c}
+            </span>
+          ))}
+        </div>
+      )}
+
       {data.nextPod && (
-        <div className="px-5 py-2 bg-acko-warm/40 border-t border-slack-border text-[12px] text-slack-textPrimary">
-          ⏭ Next: <strong>{data.nextPod}</strong>
+        <div className="px-4 md:px-5 py-2.5 bg-acko-warm/40 text-[12px] text-slack-textPrimary flex items-center gap-2">
+          <span className="text-acko-sageDark">→</span>
+          <span>Next: <strong>{data.nextPod}</strong></span>
         </div>
       )}
     </div>
@@ -220,18 +321,21 @@ function EscalationImage({ data }: { data: EscalationData }) {
   const isError = data.level === "error";
   return (
     <div
-      className={`border rounded-md w-full max-w-[520px] overflow-hidden ${
-        isError ? "border-red-400" : "border-amber-400"
-      }`}
+      className={`border-l-4 ${isError ? "border-red-500" : "border-amber-500"} bg-white rounded-r-lg w-full max-w-[520px] overflow-hidden shadow-sm`}
     >
-      <div className={`px-5 py-2 text-white font-extrabold text-[13px] uppercase tracking-wider ${isError ? "bg-red-600" : "bg-amber-600"}`}>
-        {isError ? "🚨 Escalation" : "⚠ Caution"}
+      <div className={`px-4 py-2.5 flex items-center gap-2 ${isError ? "bg-red-50" : "bg-amber-50"}`}>
+        <span className={`text-[20px] leading-none ${isError ? "text-red-600" : "text-amber-600"}`}>
+          {isError ? "🚨" : "⚠"}
+        </span>
+        <div className={`font-extrabold text-[12px] uppercase tracking-wider ${isError ? "text-red-700" : "text-amber-800"}`}>
+          {isError ? "Escalation — needs attention" : "Caution — review and decide"}
+        </div>
       </div>
-      <div className="px-5 py-3 bg-white">
-        <div className="font-extrabold text-[15px] text-slack-textPrimary">{data.title}</div>
-        <div className="mt-1 text-[13px] text-slack-textPrimary">{data.detail}</div>
+      <div className="px-4 md:px-5 py-3">
+        <div className="font-extrabold text-[15px] text-slack-textPrimary leading-snug">{data.title}</div>
+        <div className="mt-1.5 text-[13px] text-slack-textPrimary leading-snug">{data.detail}</div>
         {data.context && (
-          <div className="mt-2 text-[11px] text-slack-textSecondary uppercase tracking-wide">{data.context}</div>
+          <div className="mt-2 text-[10px] text-slack-textSecondary uppercase tracking-wider font-semibold">{data.context}</div>
         )}
       </div>
     </div>
@@ -267,34 +371,49 @@ export interface CheckoutData {
 }
 
 function CheckoutImage({ data }: { data: CheckoutData }) {
+  const done = data.items.filter((i) => i.checked).length;
+  const total = data.items.length;
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   return (
-    <div className="bg-white border border-slack-border rounded-md w-full max-w-[540px] overflow-hidden">
-      <div className="px-5 py-3 border-b border-slack-border">
-        <div className="font-extrabold text-[15px] flex items-center gap-2">
-          🛒 Checkout — {data.patientInitial}
+    <div className="bg-white border border-slack-border rounded-lg w-full max-w-[540px] overflow-hidden shadow-sm">
+      <div className="px-4 md:px-5 py-3 bg-gradient-to-br from-acko-warm to-acko-warm/60 border-b border-slack-border">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-slack-textSecondary font-bold">Checkout</div>
+            <div className="font-extrabold text-[16px] text-slack-textPrimary">{data.patientInitial}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] uppercase tracking-wider text-slack-textSecondary font-bold">Progress</div>
+            <div className="font-bold text-[14px] text-slack-textPrimary">{done} / {total}</div>
+          </div>
         </div>
-        <div className="text-[12px] text-slack-textSecondary">Tick off each item before closing the visit.</div>
+        <div className="mt-2 h-1.5 rounded-full bg-white/60 overflow-hidden">
+          <div className="h-full bg-acko-sage transition-all" style={{ width: `${pct}%` }} />
+        </div>
       </div>
-      <div className="px-5 py-3">
-        <ul className="space-y-1.5 text-[14px]">
-          {data.items.map((it, i) => (
-            <li key={i} className="flex items-center gap-2">
-              <span
-                className={`inline-flex w-4 h-4 rounded border ${
-                  it.checked ? "bg-acko-sage border-acko-sageDark text-white" : "bg-white border-slack-border"
-                } items-center justify-center text-[11px]`}
-              >
-                {it.checked ? "✓" : ""}
-              </span>
-              <span className={it.checked ? "" : "text-slack-textSecondary"}>{it.label}</span>
-            </li>
-          ))}
-        </ul>
-        {data.notes && <div className="mt-3 text-[12px] text-slack-textSecondary">{data.notes}</div>}
-      </div>
+      <ul className="divide-y divide-slack-divider">
+        {data.items.map((it, i) => (
+          <li key={i} className="flex items-center gap-3 px-4 md:px-5 py-2.5 text-[14px]">
+            <span
+              className={`inline-flex w-5 h-5 rounded border-2 items-center justify-center text-[12px] flex-shrink-0 ${
+                it.checked ? "bg-acko-sage border-acko-sageDark text-white" : "bg-white border-slack-border"
+              }`}
+            >
+              {it.checked ? "✓" : ""}
+            </span>
+            <span className={`${it.checked ? "text-slack-textPrimary" : "text-slack-textSecondary"} leading-snug`}>{it.label}</span>
+          </li>
+        ))}
+      </ul>
+      {data.notes && (
+        <div className="px-4 md:px-5 py-2 text-[12px] text-slack-textSecondary border-t border-slack-divider bg-acko-warm/30">
+          {data.notes}
+        </div>
+      )}
       {data.totalVisitDuration && (
-        <div className="px-5 py-2 bg-acko-warm/40 border-t border-slack-border text-[12px]">
-          Total visit time · <strong>{data.totalVisitDuration}</strong>
+        <div className="px-4 md:px-5 py-2 bg-acko-warm/50 border-t border-slack-border text-[12px] flex justify-between">
+          <span className="text-slack-textSecondary">Total time</span>
+          <strong className="text-slack-textPrimary">{data.totalVisitDuration}</strong>
         </div>
       )}
     </div>

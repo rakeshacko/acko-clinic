@@ -26,9 +26,12 @@ interface BlockRenderProps {
 }
 
 export function NativeBlock({ block, message, onAction, disabled }: BlockRenderProps) {
+  // Once a message has been acted on, all of its interactive elements lock.
+  const lockedByAction = !!message.actedBy;
+  const effectiveDisabled = disabled || lockedByAction;
   switch (block.type) {
     case "section":
-      return <SectionView b={block} onAction={onAction} disabled={disabled} />;
+      return <SectionView b={block} onAction={onAction} disabled={effectiveDisabled} />;
     case "header":
       return <HeaderView b={block} />;
     case "divider":
@@ -36,11 +39,11 @@ export function NativeBlock({ block, message, onAction, disabled }: BlockRenderP
     case "context":
       return <ContextView b={block} />;
     case "actions":
-      return <ActionsView b={block} onAction={onAction} disabled={disabled} />;
+      return <ActionsView b={block} onAction={onAction} disabled={effectiveDisabled} />;
     case "image":
       return <ImageBlockView b={block} />;
     case "card":
-      return <CardView b={block} onAction={onAction} disabled={disabled} />;
+      return <CardView b={block} onAction={onAction} disabled={effectiveDisabled} />;
     case "alert":
       return <AlertView b={block} />;
     case "table":

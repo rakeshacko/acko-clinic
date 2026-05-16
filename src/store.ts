@@ -77,6 +77,7 @@ interface StoreState {
   registerScenario: (s: Scenario) => void;
   setActiveChannel: (id: string) => void;
   setCurrentRole: (r: Role) => void;
+  setCurrentUser: (handle: StaffHandle) => void;
   setRenderMode: (m: RenderMode) => void;
   setPlaybackMode: (m: PlaybackMode) => void;
   setPlaybackSpeed: (n: number) => void;
@@ -87,6 +88,7 @@ interface StoreState {
   postMessage: (channelId: string, msg: Omit<Message, "id" | "channelId">) => Message;
   upsertLiveMessage: (channelId: string, key: string, msg: Omit<Message, "id" | "channelId">) => Message;
   addReaction: (messageId: string, emoji: string, by: StaffHandle) => void;
+  recordAction: (messageId: string, by: StaffHandle, actionLabel: string) => void;
   setRoomStatus: (room: RoomId, status: RoomStatus, occupant?: { initials: string; visitId: string } | null) => void;
   emitRoomEvent: (room: RoomId, ev: RoomEvent) => void;
   setOpsTodayStatus: (visitId: string, statusLine: string, extra?: Partial<OpsTodayRow>) => void;
@@ -176,6 +178,12 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ currentRole: r, currentUserHandle: handle });
   },
 
+  setCurrentUser: (handle: StaffHandle) => {
+    const staff = STAFF.find((s) => s.handle === handle);
+    if (!staff) return;
+    set({ currentUserHandle: handle, currentRole: staff.role });
+  },
+
   setRenderMode: (m) => set({ renderMode: m }),
   setPlaybackMode: (m) => set({ playbackMode: m }),
   setPlaybackSpeed: (n) => set({ playbackSpeed: n }),
@@ -231,6 +239,27 @@ export const useStore = create<StoreState>((set, get) => ({
       };
     });
     return result;
+  },
+
+  recordAction: (messageId, by, actionLabel) => {
+    set((st) => {
+      const next = { ...st.messagesByChannel };
+      for (const [cid, list] of Object.entries(next)) {
+        const idx = list.findIndex((m) => m.id === messageId);
+        if (idx >= 0) {
+          if (list[idx].actedBy) return {}; // already acted on
+          const updated: Message = {
+            ...list[idx],
+            actedBy: { handle: by, ts: st.clock, actionLabel },
+          };
+          const newList = [...list];
+          newList[idx] = updated;
+          next[cid] = newList;
+          break;
+        }
+      }
+      return { messagesByChannel: next };
+    });
   },
 
   addReaction: (messageId, emoji, by) => {
@@ -316,11 +345,15 @@ export const useStore = create<StoreState>((set, get) => ({
     };
     const channelId = visit.channelId;
     // Create the visit channel
+    const typeLabel =
+      visit.type === "screening" ? "Annual screening"
+      : visit.type === "consulting" ? "Doctor consult"
+      : "Single test";
     const channel: Channel = {
       id: channelId,
       name: seed.channelName,
       kind: "visit",
-      topic: `${visit.type.toUpperCase()} · ${visit.patient.firstName[0]}. ${visit.patient.lastName}`,
+      topic: `${typeLabel} · ${visit.patient.firstName[0]}. ${visit.patient.lastName}`,
       members: ["VisitBot" as any, "PodBot" as any, "AppRelay" as any, ...(seed.initialMembers ?? [])],
       createdAt: get().clock,
       visitType: visit.type,
