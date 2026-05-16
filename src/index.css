@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: Lato, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Helvetica, Arial, sans-serif;
+  color: #1d1c1d;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Slack-ish scrollbar */
+.slack-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.slack-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+}
+.slack-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Image-card faux frame */
+.image-card-frame {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+.image-card-frame * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.msg-enter {
+  animation: fadeInUp 220ms ease-out;
+}
