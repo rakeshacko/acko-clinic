@@ -158,6 +158,18 @@ function expandTemplateBlocks(blocks: Block[], mode: "native" | "image"): { rend
       // image-only templates always render as image regardless of requested mode
       const useImage = wantsImage || tmpl.capability === "image-only";
       if (useImage) {
+        // Native requested for an image-only template → small notice.
+        if (mode === "native" && tmpl.capability === "image-only") {
+          rendered.push({
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `_This template (\`${b.templateId}\`) can only render as an image card — Block Kit can't express it natively._`,
+              },
+            ],
+          });
+        }
         imageBlocks.push({
           templateId: b.templateId,
           data: (b as any).data,
