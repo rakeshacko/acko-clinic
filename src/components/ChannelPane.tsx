@@ -64,9 +64,13 @@ function RegularChannelPane() {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white min-w-0">
+    <div className="flex-1 flex flex-col bg-white min-w-0 min-h-0 h-full">
       <ChannelHeader name={channel.name} kind={channel.kind} topic={channel.topic} members={channel.members.length} locked={!!channel.locked} archived={!!channel.archived} onTogglePanel={toggleRightPanel} dmWith={channel.dmWith} />
-      <div ref={listRef} className="flex-1 overflow-y-auto slack-scroll bg-white">
+      <div
+        ref={listRef}
+        className="flex-1 overflow-y-auto overscroll-contain slack-scroll bg-white min-h-0"
+        style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}
+      >
         <ChannelIntro name={channel.name} kind={channel.kind} topic={channel.topic} />
         {visible.length === 0 && <div className="px-6 py-10 text-slack-textSecondary text-sm italic">No messages yet in this channel.</div>}
         <GroupedMessages messages={visible} onAction={handleAction} />

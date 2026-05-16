@@ -21,22 +21,25 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden bg-white text-slack-textPrimary">
+    <div
+      className="w-screen flex flex-col md:flex-row overflow-hidden bg-white text-slack-textPrimary"
+      style={{ height: "100dvh" }}
+    >
       {/* LeftRail is hidden on mobile — its actions live in the bottom tab bar. */}
       <div className="hidden md:flex flex-shrink-0">
         <LeftRail />
       </div>
 
-      {/* Sidebar: full-width on mobile when open; fixed 260px on desktop. */}
+      {/* Sidebar: full-width and flex-1 on mobile when open; fixed 260px on desktop. */}
       <div
-        className={`${mobileSidebarOpen ? "flex" : "hidden"} md:flex flex-col w-full md:w-[260px] flex-shrink-0 h-full min-h-0`}
+        className={`${mobileSidebarOpen ? "flex flex-1" : "hidden"} md:flex md:flex-none flex-col w-full md:w-[260px] min-h-0 min-w-0`}
       >
         <Sidebar />
       </div>
 
-      {/* Channel pane: full-width on mobile when sidebar hidden; flex-1 on desktop. */}
+      {/* Channel pane: flex-1 on mobile when sidebar hidden; flex-1 on desktop. */}
       <div
-        className={`${mobileSidebarOpen ? "hidden" : "flex"} md:flex flex-col flex-1 min-w-0 h-full min-h-0`}
+        className={`${mobileSidebarOpen ? "hidden" : "flex flex-1"} md:flex md:flex-1 flex-col min-w-0 min-h-0`}
       >
         <ChannelPane />
       </div>
