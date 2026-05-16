@@ -25,7 +25,7 @@ export interface VisitCardData {
 function VisitCardImage({ data }: { data: VisitCardData }) {
   const { patient } = data;
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[560px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[560px] overflow-hidden">
       <div className="bg-acko-warm px-5 py-3 border-b border-slack-border flex items-baseline justify-between">
         <div>
           <div className="text-[11px] uppercase tracking-wider text-acko-sageDark font-bold">
@@ -40,7 +40,7 @@ function VisitCardImage({ data }: { data: VisitCardData }) {
           <div className="text-[15px] font-bold">{data.scheduledTime}</div>
         </div>
       </div>
-      <div className="px-5 py-3 grid grid-cols-2 gap-x-6 gap-y-2 text-[13px]">
+      <div className="px-4 md:px-5 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-[13px]">
         {data.package && <Field label="Package" value={data.package} />}
         {data.concern && <Field label="Concern" value={data.concern} />}
         {data.duration && <Field label="Expected duration" value={data.duration} />}
@@ -129,7 +129,7 @@ export interface PodResultData {
 
 function PodResultImage({ data }: { data: PodResultData }) {
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[540px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[540px] overflow-hidden">
       <div className="px-5 py-3 border-b border-slack-border flex items-start gap-3">
         <div className="text-2xl">{data.emoji}</div>
         <div className="flex-1">
@@ -142,7 +142,7 @@ function PodResultImage({ data }: { data: PodResultData }) {
         </div>
       </div>
       <div className="px-5 py-3">
-        <div className="grid grid-cols-2 gap-x-5 gap-y-1.5 text-[13px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1.5 text-[13px]">
           {data.values.map((v, i) => (
             <div key={i} className="flex justify-between border-b border-slack-divider/70 py-0.5">
               <span className="text-slack-textSecondary">{v.label}</span>
@@ -220,7 +220,7 @@ function EscalationImage({ data }: { data: EscalationData }) {
   const isError = data.level === "error";
   return (
     <div
-      className={`border rounded-md w-[520px] overflow-hidden ${
+      className={`border rounded-md w-full max-w-[520px] overflow-hidden ${
         isError ? "border-red-400" : "border-amber-400"
       }`}
     >
@@ -268,7 +268,7 @@ export interface CheckoutData {
 
 function CheckoutImage({ data }: { data: CheckoutData }) {
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[540px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[540px] overflow-hidden">
       <div className="px-5 py-3 border-b border-slack-border">
         <div className="font-extrabold text-[15px] flex items-center gap-2">
           🛒 Checkout — {data.patientInitial}
@@ -338,7 +338,7 @@ export interface MorningDigestData {
 
 function MorningDigestImage({ data }: { data: MorningDigestData }) {
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[520px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[520px] overflow-hidden">
       <div className="px-5 py-3 bg-acko-warm border-b border-slack-border">
         <div className="font-extrabold text-[15px]">☀ Morning digest · {data.date}</div>
         <div className="text-[12px] text-slack-textSecondary">For @{data.recipient} · {data.visits.length} visits today</div>
@@ -397,17 +397,19 @@ export interface OpsRowData {
 
 function OpsRowImage({ data }: { data: OpsRowData }) {
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[640px] px-4 py-2 flex items-center gap-4">
-      <div className="font-bold text-[14px]">{data.patientInitial}</div>
-      <div className="text-[12px] text-slack-textSecondary uppercase tracking-wide w-24">{data.visitType}</div>
-      <div className="text-[12px] flex-1">
-        {data.currentRoom && (
-          <span className="font-semibold mr-2">{data.currentRoom}</span>
-        )}
-        <span>{data.statusLine}</span>
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[640px] px-3 md:px-4 py-2">
+      <div className="flex items-center gap-2 md:gap-4 flex-wrap">
+        <div className="font-bold text-[14px]">{data.patientInitial}</div>
+        <div className="text-[12px] text-slack-textSecondary uppercase tracking-wide">{data.visitType}</div>
+        <div className="text-[11px] text-acko-sageDark ml-auto">#{data.channelName}</div>
       </div>
-      <div className="text-[11px] text-slack-textSecondary">{data.elapsed}</div>
-      <div className="text-[11px] text-acko-sageDark">#{data.channelName}</div>
+      <div className="flex items-center gap-2 mt-1 text-[12px] flex-wrap">
+        {data.currentRoom && (
+          <span className="font-semibold">{data.currentRoom}</span>
+        )}
+        <span className="flex-1 min-w-0">{data.statusLine}</span>
+        <span className="text-[11px] text-slack-textSecondary">{data.elapsed}</span>
+      </div>
     </div>
   );
 }
@@ -449,12 +451,12 @@ export interface ScreeningReportData {
 
 function ScreeningReportImage({ data }: { data: ScreeningReportData }) {
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[640px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[640px] overflow-hidden">
       <div className="px-5 py-3 bg-acko-warm border-b border-slack-border">
         <div className="font-extrabold text-[16px]">Screening Report · {data.patientInitial}</div>
         <div className="text-[12px] text-slack-textSecondary">Pod-by-pod summary with body highlights</div>
       </div>
-      <div className="grid grid-cols-[1fr,1fr] gap-4 p-5">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr,1fr] gap-4 p-4 md:p-5">
         <div>
           <div className="text-[12px] uppercase tracking-wide text-slack-textSecondary mb-2">Body highlights</div>
           <div className="relative bg-acko-warm/40 rounded-md h-[260px] overflow-hidden border border-slack-divider">
@@ -559,7 +561,7 @@ function FloorBoardSnapshotImage({ data }: { data: FloorBoardSnapshotData }) {
   const color = (s: string) =>
     s === "Ready" ? "bg-green-100 border-green-400 text-green-900" : s === "Occupied" ? "bg-amber-100 border-amber-400 text-amber-900" : "bg-red-100 border-red-400 text-red-900";
   return (
-    <div className="bg-white border border-slack-border rounded-md w-[680px] overflow-hidden">
+    <div className="bg-white border border-slack-border rounded-md w-full max-w-[680px] overflow-hidden">
       <div className="px-5 py-3 bg-acko-warm border-b border-slack-border flex items-baseline justify-between">
         <div className="font-extrabold text-[15px]">Floor board snapshot</div>
         <div className="text-[12px] text-slack-textSecondary">captured at {data.capturedAt}</div>
@@ -568,7 +570,7 @@ function FloorBoardSnapshotImage({ data }: { data: FloorBoardSnapshotData }) {
         {groups.map((g) => (
           <div key={g.kind}>
             <div className="text-[11px] uppercase tracking-wide text-slack-textSecondary mb-1">{g.title}</div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {data.rooms
                 .filter((r) => r.kind === g.kind)
                 .map((r) => (

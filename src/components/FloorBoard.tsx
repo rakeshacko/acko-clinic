@@ -15,9 +15,9 @@ export function FloorBoard() {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-30 flex" onClick={close}>
+    <div className="fixed inset-x-0 top-0 bottom-[56px] md:bottom-0 bg-black/40 z-20 flex" onClick={close}>
       <div
-        className="ml-auto h-full w-[460px] bg-white shadow-2xl flex flex-col"
+        className="ml-auto h-full w-full md:w-[460px] bg-white shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-5 py-3 border-b border-slack-border flex items-center justify-between">

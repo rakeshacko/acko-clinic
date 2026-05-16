@@ -61,7 +61,7 @@ function SectionView({ b, onAction, disabled }: { b: SectionBlock; onAction?: Bl
         <div className="flex-1">
           {b.text ? <div><Mrkdwn text={textOf(b.text)} /></div> : null}
           {b.fields && b.fields.length > 0 ? (
-            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[14px]">
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[14px]">
               {b.fields.map((f, i) => (
                 <div key={i}>
                   <Mrkdwn text={f.text} />
@@ -119,7 +119,7 @@ function CardView({ b, onAction, disabled }: { b: CardBlock; onAction?: BlockRen
   const c = b.card;
   return (
     <div className="my-1 border-l-2 border-[#E0E0E0] pl-3">
-      <div className="border border-slack-border rounded-md max-w-[640px] overflow-hidden bg-white">
+      <div className="border border-slack-border rounded-md w-full max-w-[640px] overflow-hidden bg-white">
         {c.hero_url ? (
           <div className="bg-acko-warm/60 aspect-[4/3] max-h-48 overflow-hidden flex items-center justify-center">
             <img src={c.hero_url} alt="" className="object-cover w-full h-full" />
@@ -141,7 +141,7 @@ function CardView({ b, onAction, disabled }: { b: CardBlock; onAction?: BlockRen
             </div>
           ) : null}
           {c.fields && c.fields.length > 0 ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 text-[13px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-3 text-[13px]">
               {c.fields.map((f, i) => (
                 <div key={i}>
                   <div className="text-slack-textSecondary text-[11px] uppercase tracking-wide">{f.label}</div>

@@ -22,12 +22,13 @@ export function ControlPanel() {
   const toggleFloorBoard = useStore((s) => s.toggleFloorBoard);
 
   if (!open) {
+    // Only show the floating FAB on desktop; mobile uses the bottom tab bar.
     return (
       <button
         onClick={toggle}
-        className="fixed bottom-4 right-4 z-20 bg-acko-sage text-white px-3 py-2 rounded-md shadow-lg text-[13px] font-bold hover:bg-acko-sageDark"
+        className="hidden md:flex fixed bottom-4 right-4 z-20 bg-acko-sage text-white px-3 py-2 rounded-md shadow-lg text-[13px] font-bold hover:bg-acko-sageDark items-center gap-1"
       >
-        🎬 Control panel
+        🎬 Cockpit
       </button>
     );
   }
@@ -57,13 +58,13 @@ export function ControlPanel() {
   };
 
   return (
-    <div className="fixed right-0 top-0 bottom-0 w-[380px] bg-white border-l border-slack-border shadow-xl z-20 flex flex-col">
+    <div className="fixed right-0 top-0 bottom-[56px] md:bottom-0 w-full md:w-[380px] bg-white md:border-l border-slack-border shadow-xl z-20 flex flex-col">
       <div className="px-4 py-3 border-b border-slack-border flex items-center justify-between bg-acko-sage text-white flex-shrink-0">
         <div>
           <div className="font-extrabold text-[14px]">🎬 Simulation cockpit</div>
           <div className="text-[11px] opacity-90">Not part of the Slack chrome.</div>
         </div>
-        <button onClick={toggle} className="text-white/80 text-2xl leading-none">×</button>
+        <button onClick={toggle} className="text-white/80 text-2xl leading-none w-8 h-8 flex items-center justify-center">×</button>
       </div>
       <div className="flex-1 overflow-y-auto slack-scroll p-4 space-y-4">
         <Section title="Clock">

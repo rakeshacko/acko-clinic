@@ -65,6 +65,10 @@ interface StoreState {
   playbackSpeed: number; // 0.5, 1, 2, 4
   clock: string; // current in-fiction HH:MM
   unreadByChannel: Record<string, number>;
+  // Mobile-only: true when sidebar (channel list) covers the screen.
+  // Defaults to true so a first-load on mobile shows the list. On desktop
+  // both panes are always visible regardless of this flag.
+  mobileSidebarOpen: boolean;
 
   // Pending interactive (form modal)
   pendingForm?: { instanceId: string; formId: string; beatId: string };
@@ -79,6 +83,7 @@ interface StoreState {
   toggleRightPanel: () => void;
   toggleControlPanel: () => void;
   toggleFloorBoard: () => void;
+  setMobileSidebarOpen: (open: boolean) => void;
   postMessage: (channelId: string, msg: Omit<Message, "id" | "channelId">) => Message;
   upsertLiveMessage: (channelId: string, key: string, msg: Omit<Message, "id" | "channelId">) => Message;
   addReaction: (messageId: string, emoji: string, by: StaffHandle) => void;
@@ -134,13 +139,16 @@ export const useStore = create<StoreState>((set, get) => ({
   currentUserHandle: "kavya.rao",
   activeChannelId: "c-ops-today",
   rightPanelOpen: false,
-  controlPanelOpen: true,
+  // Control panel is hidden by default on mobile (and on desktop after the
+  // first scenario starts is fine too — user re-opens with the FAB).
+  controlPanelOpen: false,
   showFloorBoard: false,
   renderMode: "native",
   playbackMode: "auto",
   playbackSpeed: 1,
   clock: "08:00",
   unreadByChannel: {},
+  mobileSidebarOpen: true,
 
   registerScenario: (s) => set((st) => ({ scenarios: { ...st.scenarios, [s.id]: s } })),
 
@@ -148,6 +156,9 @@ export const useStore = create<StoreState>((set, get) => ({
     set((st) => ({
       activeChannelId: id,
       unreadByChannel: { ...st.unreadByChannel, [id]: 0 },
+      // On mobile, picking a channel hides the sidebar so the channel pane
+      // takes the full screen. On desktop the layout shows both regardless.
+      mobileSidebarOpen: false,
     })),
 
   setCurrentRole: (r) => {
@@ -171,6 +182,7 @@ export const useStore = create<StoreState>((set, get) => ({
   toggleRightPanel: () => set((s) => ({ rightPanelOpen: !s.rightPanelOpen })),
   toggleControlPanel: () => set((s) => ({ controlPanelOpen: !s.controlPanelOpen })),
   toggleFloorBoard: () => set((s) => ({ showFloorBoard: !s.showFloorBoard })),
+  setMobileSidebarOpen: (open) => set({ mobileSidebarOpen: open }),
 
   postMessage: (channelId, msg) => {
     const m: Message = {

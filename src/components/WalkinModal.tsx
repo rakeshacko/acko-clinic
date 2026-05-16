@@ -60,17 +60,17 @@ function Inner({
 }) {
   const [values, setValues] = useState<Record<string, any>>(initialValues);
   return (
-    <div className="fixed inset-0 z-40 bg-black/50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-lg shadow-2xl w-[520px] max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-40 bg-black/50 flex items-end md:items-center justify-center p-0 md:p-6">
+      <div className="bg-white rounded-t-lg md:rounded-lg shadow-2xl w-full md:w-[520px] max-h-[85vh] md:max-h-[90vh] flex flex-col">
         <div className="px-5 py-3 border-b border-slack-border flex items-center justify-between">
           <div className="font-extrabold text-[16px]">{spec.title}</div>
           <button className="text-slack-textSecondary text-2xl leading-none" onClick={onCancel}>
             ×
           </button>
         </div>
-        <div className="overflow-y-auto slack-scroll px-5 py-3 grid grid-cols-2 gap-x-4 gap-y-2">
+        <div className="overflow-y-auto slack-scroll px-4 md:px-5 py-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
           {spec.fields.map((f: any) => (
-            <div key={f.id} className={!f.inline && f.type !== "checkbox" ? "col-span-2" : "col-span-1"}>
+            <div key={f.id} className={!f.inline && f.type !== "checkbox" ? "md:col-span-2" : "md:col-span-1"}>
               <label className="block text-[12px] uppercase tracking-wide text-slack-textSecondary font-bold mb-1">{f.label}</label>
               {f.type === "select" ? (
                 <select

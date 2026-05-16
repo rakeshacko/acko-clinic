@@ -32,8 +32,8 @@ export function Sidebar() {
   const dms = visible.filter((c) => c.kind === "dm");
 
   return (
-    <aside className="w-[260px] bg-[#19171D] text-[#BCABBC] flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-black/30 flex items-center justify-between">
+    <aside className="w-full md:w-[260px] bg-[#19171D] text-[#BCABBC] flex flex-col h-full min-h-0">
+      <div className="px-4 py-3 border-b border-black/30 flex items-center justify-between safe-top">
         <div>
           <div className="text-white font-bold text-[15px]">ACKO Clinic Floor</div>
           <div className="text-[11px] text-white/50">
@@ -42,14 +42,14 @@ export function Sidebar() {
           </div>
         </div>
         <button
-          className="w-8 h-8 rounded bg-white text-[#19171D] flex items-center justify-center text-base shadow-sm hover:bg-white/90"
+          className="w-9 h-9 md:w-8 md:h-8 rounded bg-white text-[#19171D] flex items-center justify-center text-base shadow-sm hover:bg-white/90"
           title="New message"
         >
           ✎
         </button>
       </div>
 
-      <div className="overflow-y-auto slack-scroll text-[14px]">
+      <div className="overflow-y-auto slack-scroll text-[14px] flex-1 min-h-0">
         <Section title="Starred">
           {starred.map((c) => (
             <ChannelRow
@@ -154,7 +154,7 @@ function ChannelRow({
   return (
     <button
       onClick={onClick}
-      className={`w-full px-3 py-[5px] text-left flex items-center gap-1.5 ${
+      className={`w-full px-3 py-2 md:py-[5px] text-left flex items-center gap-1.5 ${
         active ? "bg-[#1164A3] text-white" : "text-white/80 hover:bg-white/5"
       } ${unread > 0 && !active ? "font-bold text-white" : ""} ${archived ? "italic text-white/45" : ""}`}
     >

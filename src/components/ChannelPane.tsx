@@ -79,11 +79,11 @@ function RegularChannelPane() {
 
 function ChannelIntro({ name, kind, topic }: { name: string; kind: string; topic?: string }) {
   return (
-    <div className="px-6 pt-6 pb-3">
-      <div className="text-2xl font-extrabold text-slack-textPrimary mb-1">
+    <div className="px-4 md:px-6 pt-4 md:pt-6 pb-3">
+      <div className="text-xl md:text-2xl font-extrabold text-slack-textPrimary mb-1">
         👋 Welcome to <span className="text-slack-link">{kind === "dm" ? name : `#${name}`}</span>
       </div>
-      <div className="text-[14px] text-slack-textSecondary">{topic ?? "This is the start of the channel."}</div>
+      <div className="text-[13px] md:text-[14px] text-slack-textSecondary">{topic ?? "This is the start of the channel."}</div>
     </div>
   );
 }
@@ -91,15 +91,24 @@ function ChannelIntro({ name, kind, topic }: { name: string; kind: string; topic
 function ChannelHeader({ name, kind, topic, members, locked, archived, onTogglePanel, dmWith }: { name: string; kind: string; topic?: string; members: number; locked: boolean; archived: boolean; onTogglePanel: () => void; dmWith?: string }) {
   const prefix = archived ? "🗄 " : locked ? "🔒 " : kind === "dm" ? "" : "# ";
   const displayName = kind === "dm" ? dmWith ?? name : `${prefix}${name}`;
+  const setMobileSidebar = useStore((s) => s.setMobileSidebarOpen);
   return (
-    <div className="h-[60px] border-b border-slack-border bg-white flex items-center px-5 gap-3 flex-shrink-0">
+    <div className="h-[56px] md:h-[60px] border-b border-slack-border bg-white flex items-center px-3 md:px-5 gap-2 md:gap-3 flex-shrink-0">
+      {/* Mobile-only back arrow to return to the channel list */}
+      <button
+        className="md:hidden -ml-1 w-9 h-9 flex items-center justify-center rounded-md text-slack-textSecondary hover:bg-slack-divider/40 text-xl"
+        onClick={() => setMobileSidebar(true)}
+        aria-label="Back to channels"
+      >
+        ‹
+      </button>
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="font-extrabold text-[18px] text-slack-textPrimary flex items-center gap-2 truncate">
-          <span>{displayName}</span>
+        <div className="font-extrabold text-[16px] md:text-[18px] text-slack-textPrimary flex items-center gap-2 truncate">
+          <span className="truncate">{displayName}</span>
           {locked && <span className="text-xs bg-slack-divider text-slack-textSecondary px-2 py-0.5 rounded">Locked</span>}
           {archived && <span className="text-xs bg-slack-divider text-slack-textSecondary px-2 py-0.5 rounded">Archived</span>}
         </div>
-        {topic && <div className="text-[12px] text-slack-textSecondary truncate">{topic}</div>}
+        {topic && <div className="text-[11px] md:text-[12px] text-slack-textSecondary truncate">{topic}</div>}
       </div>
       <button className="flex items-center gap-1 text-[12px] px-2 py-1 hover:bg-slack-divider/60 rounded text-slack-textSecondary" onClick={onTogglePanel}>
         <span>👥</span>
@@ -174,9 +183,10 @@ function Composer({ channelId, channelLabel, role }: { channelId: string; channe
   };
 
   return (
-    <div className="px-4 pb-3 pt-1 bg-white flex-shrink-0">
+    <div className="px-2 md:px-4 pb-2 md:pb-3 pt-1 bg-white flex-shrink-0">
       <div className={`border ${locked ? "border-slack-divider bg-slack-divider/20 text-slack-textSecondary italic" : "border-slack-border"} rounded-md`}>
-        <div className="flex items-center px-2 py-1 border-b border-slack-divider gap-1.5 text-slack-textSecondary text-[13px]">
+        {/* Desktop-only formatting toolbar; hidden on mobile to save space. */}
+        <div className="hidden md:flex items-center px-2 py-1 border-b border-slack-divider gap-1.5 text-slack-textSecondary text-[13px]">
           <button className="hover:bg-slack-divider/40 rounded px-1.5 py-0.5">B</button>
           <button className="hover:bg-slack-divider/40 rounded px-1.5 py-0.5 italic">I</button>
           <button className="hover:bg-slack-divider/40 rounded px-1.5 py-0.5">S</button>
@@ -189,7 +199,7 @@ function Composer({ channelId, channelLabel, role }: { channelId: string; channe
           <button className="hover:bg-slack-divider/40 rounded px-1.5 py-0.5">📎</button>
         </div>
         <textarea
-          rows={2}
+          rows={1}
           disabled={locked}
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -200,7 +210,7 @@ function Composer({ channelId, channelLabel, role }: { channelId: string; channe
             }
           }}
           placeholder={locked ? `${channelLabel} is locked` : `Message ${channelLabel}`}
-          className="w-full resize-none px-3 py-2 text-[14px] focus:outline-none disabled:bg-transparent"
+          className="w-full resize-none px-3 py-2 text-[15px] md:text-[14px] focus:outline-none disabled:bg-transparent min-h-[40px]"
         />
         <div className="px-2 py-1 flex items-center justify-between border-t border-slack-divider text-[12px] text-slack-textSecondary">
           <div className="flex gap-1">
@@ -219,7 +229,7 @@ function Composer({ channelId, channelLabel, role }: { channelId: string; channe
           </button>
         </div>
       </div>
-      <div className="text-[11px] text-slack-textSecondary mt-1 px-1">
+      <div className="hidden md:block text-[11px] text-slack-textSecondary mt-1 px-1">
         Tip: type <code className="font-mono bg-slack-divider/30 px-1 rounded">/walkin</code>, <code className="font-mono bg-slack-divider/30 px-1 rounded">/queue</code>, or <code className="font-mono bg-slack-divider/30 px-1 rounded">/escalate</code>.
       </div>
     </div>

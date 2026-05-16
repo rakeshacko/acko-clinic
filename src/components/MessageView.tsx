@@ -46,7 +46,7 @@ export function MessageView({ message, showAuthor = true, onAction }: MessageVie
 
   return (
     <div
-      className={`group relative px-5 py-1 pl-7 hover:bg-[#F8F8F8] msg-enter ${ephemeral ? "bg-[#FFF8E1]/40" : ""} ${sourceBarClass(message)}`}
+      className={`group relative px-3 md:px-5 py-1 pl-5 md:pl-7 hover:bg-[#F8F8F8] msg-enter ${ephemeral ? "bg-[#FFF8E1]/40" : ""} ${sourceBarClass(message)}`}
     >
       <div className="flex gap-2.5">
         {showAuthor ? (
@@ -127,8 +127,9 @@ function BlocksWithRenderMode({
   };
 
   if (effectiveMode === "side-by-side") {
+    // On mobile, stack vertically — side-by-side panes don't fit.
     return (
-      <div className="grid grid-cols-2 gap-3 mt-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-1">
         <div>
           <div className="text-[10px] uppercase tracking-wider text-slack-textSecondary mb-1">Native</div>
           <RenderPath blocks={blocks} message={message} mode="native" onAction={handleAction} />
