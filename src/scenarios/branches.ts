@@ -423,19 +423,28 @@ export const branchB7: Scenario = {
       id: "back-online",
       label: "Recovered",
       emit: [botMsg({ author: "PodBot", ts: "10:02", text: "✅ CT pod back online · queue resuming." })],
-      sideEffects: [{ type: "setRoomStatus", room: "CT", status: "Ready" }],
+      sideEffects: [
+        { type: "setRoomStatus", room: "CT", status: "Ready" },
+        { type: "setOpsTodayStatus", statusLine: "CT recovered · resuming", currentStep: "Recovered" },
+      ],
     }),
     autoBeat({
       id: "reschedule",
       label: "Test rescheduled",
       emit: [botMsg({ author: "VisitBot", ts: "10:02", text: "📅 CT for S. Reddy rescheduled · tomorrow 09:30." })],
-      sideEffects: [{ type: "setRoomStatus", room: "CT", status: "Ready" }],
+      sideEffects: [
+        { type: "setRoomStatus", room: "CT", status: "Ready" },
+        { type: "setOpsTodayStatus", statusLine: "CT rescheduled to tomorrow 09:30", currentStep: "Rescheduled" },
+      ],
     }),
     autoBeat({
       id: "refund",
       label: "Refund issued",
       emit: [botMsg({ author: "VisitBot", ts: "10:02", text: "💸 CT portion refunded · screening recorded as 8/9 pods complete." })],
-      sideEffects: [{ type: "setRoomStatus", room: "CT", status: "Ready" }],
+      sideEffects: [
+        { type: "setRoomStatus", room: "CT", status: "Ready" },
+        { type: "setOpsTodayStatus", statusLine: "CT refunded · 8/9 pods", currentStep: "Refund" },
+      ],
     }),
   ],
 };

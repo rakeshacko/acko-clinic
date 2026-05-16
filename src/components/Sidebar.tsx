@@ -7,18 +7,22 @@ export function Sidebar() {
   const setActive = useStore((s) => s.setActiveChannel);
   const unreads = useStore((s) => s.unreadByChannel);
   const role = useStore((s) => s.currentRole);
+  const currentUser = useStore((s) => s.currentUserHandle);
 
-  // role-channel filter: only show role-* channels matching the active role
+  // role-channel filter: only show role-* channels matching the active role,
+  // and only show DMs that include the current user.
   const visible = useMemo(() => {
     return channels.filter((c) => {
-      if (c.archived) return true; // still appear, with strike
+      if (c.kind === "dm") {
+        return c.members.includes(currentUser);
+      }
       if (c.name.startsWith("role-")) {
         const map: Record<string, string> = { vm: "role-vm", fc: "role-fc", fm: "role-fm", doctor: "role-fm", nurse: "role-techs", tech: "role-techs" };
         return c.name === map[role];
       }
       return true;
     });
-  }, [channels, role]);
+  }, [channels, role, currentUser]);
 
   const standing = visible.filter((c) => c.kind === "standing" && !c.starred);
   const starred = visible.filter((c) => c.kind === "standing" && c.starred);

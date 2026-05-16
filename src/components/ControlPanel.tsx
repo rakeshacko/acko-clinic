@@ -45,14 +45,15 @@ export function ControlPanel() {
   };
 
   const runTheDay = () => {
-    // launch 4 staggered scenarios
+    // launch 4 staggered scenarios; stay on #ops-today so the user can watch
+    // them all populate the dashboard live.
     const order = ["screening", "consulting", "single-test", "walkin-member"];
+    setActiveChannel("c-ops-today");
     order.forEach((sid, i) => {
       setTimeout(() => {
-        if (scenarios[sid]) handleStart(sid);
-      }, i * 1200);
+        if (scenarios[sid]) startScenario(sid);
+      }, i * 1500);
     });
-    setActiveChannel("c-ops-today");
   };
 
   return (

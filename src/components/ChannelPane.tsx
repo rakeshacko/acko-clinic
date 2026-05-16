@@ -89,7 +89,8 @@ function ChannelIntro({ name, kind, topic }: { name: string; kind: string; topic
 }
 
 function ChannelHeader({ name, kind, topic, members, locked, archived, onTogglePanel, dmWith }: { name: string; kind: string; topic?: string; members: number; locked: boolean; archived: boolean; onTogglePanel: () => void; dmWith?: string }) {
-  const displayName = kind === "dm" ? dmWith ?? name : `${archived ? "🗄 " : locked ? "🔒 " : kind === "visit" ? "" : "# "}${name}`;
+  const prefix = archived ? "🗄 " : locked ? "🔒 " : kind === "dm" ? "" : "# ";
+  const displayName = kind === "dm" ? dmWith ?? name : `${prefix}${name}`;
   return (
     <div className="h-[60px] border-b border-slack-border bg-white flex items-center px-5 gap-3 flex-shrink-0">
       <div className="flex flex-col flex-1 min-w-0">
