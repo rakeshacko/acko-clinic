@@ -44,6 +44,9 @@ export function ControlPanel() {
     const inst = startScenario(id);
     const inst2 = useStore.getState().instances[inst];
     if (inst2) setActiveChannel(inst2.channelId);
+    // Close the cockpit so the user lands on the channel they just started,
+    // not still looking at the Run drawer.
+    if (useStore.getState().controlPanelOpen) toggle();
   };
 
   const runTheDay = () => {
@@ -54,6 +57,8 @@ export function ControlPanel() {
         if (scenarios[sid]) startScenario(sid);
       }, i * 1500);
     });
+    // Close the cockpit so the user can watch ops-today populate.
+    if (useStore.getState().controlPanelOpen) toggle();
   };
 
   return (
